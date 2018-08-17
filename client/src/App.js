@@ -12,6 +12,7 @@ class App extends Component {
     super(props);
     this.state = {
       drones: [],
+      ready: false,
     };
 
     this.columns = [
@@ -28,16 +29,29 @@ class App extends Component {
       {
         field: 'location',
         label: 'Location',
-        render: (value, obj) => (
-          <label>
-            <Toggle
-            defaultChecked={value}
-            icons={false}
-            onChange={this.update(obj.id, 'active')} />
-          </label>
-        ),
+        render: (value) => value ? value.toString() : '',
       },
     ];
+
+    this.getDevices();
+  }
+
+  getDevices() {
+    fetch('http://0.0.0.0:8000/drones')
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then(json => {
+        if (json) {
+          this.setState({
+            drones: json.data,
+            ready: true,
+          });
+        }
+      })
+      .catch(err => console.log(err));
   }
 
   render() {
