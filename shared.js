@@ -5,11 +5,13 @@ const drones = (n => {
     drones.push({
       id: i,
       name: `name-${i}`,
-      secret: i,
-      location: {
-        tenSecAgo: null,
-        current: null,
+      key: i,
+      moving: false,
+      tracker: {
+        time: null,
+        locations: [],
       },
+      location: null,
     });
   }
 
