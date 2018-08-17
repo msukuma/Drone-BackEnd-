@@ -16,4 +16,11 @@ const drones = (n => {
   return drones;
 })(10);
 
-module.exports = { drones };
+module.exports = {
+  drones,
+  host: '0.0.0.0',
+  webPort: 8000,
+  dronePort: 8001,
+  clientPort: 8002,
+  dronesPath: '/drones',
+};

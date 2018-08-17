@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import {
+  host,
+  webPort,
+  dronesPath
+} from './shared';
+import {
   Table,
   Container,
   Provider,
@@ -29,7 +34,7 @@ class App extends Component {
       {
         field: 'location',
         label: 'Location',
-        render: (value) => value ? value.toString() : '',
+        render: (value) => value ? value.toString() : '...waiting',
       },
     ];
 
@@ -37,7 +42,7 @@ class App extends Component {
   }
 
   getDevices() {
-    fetch('http://0.0.0.0:8000/drones')
+    fetch(`http://${host}:${webPort}${dronesPath}`)
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -52,6 +57,20 @@ class App extends Component {
         }
       })
       .catch(err => console.log(err));
+  }
+
+  initWebSocket() {
+    const socket = new WebSocket('ws://0.0.0.0:8001');
+
+    // Connection opened
+    socket.addEventListener('open', function (event) {
+        socket.send('Hello Server!');
+      });
+
+    // Listen for messages
+    socket.addEventListener('message', function (event) {
+        console.log('Message from server ', event.data);
+      });
   }
 
   render() {

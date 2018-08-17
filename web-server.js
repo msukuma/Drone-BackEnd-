@@ -6,8 +6,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const server = app;
-const webPort = 8000;
-const { drones } = require('./shared');
+const {
+  drones,
+  webPort,
+  dronesPath,
+} = require('./shared');
 
 app.use(bodyParser.json());
 
@@ -30,7 +33,7 @@ app.get('/', function (req, res) {
   res.sendFile(join(__dirname, 'client', 'build', 'index.html'));
 });
 
-app.get('/drones', function (req, res) {
+app.get(dronesPath, function (req, res) {
   const data = drones.map(({ id, name, location: { current:location } }) => ({
     id,
     name,
