@@ -4,8 +4,10 @@
   "description": "Resin drone backend challenge",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start-servers": "node index.js",
+    "drone-simulator": "node test/drone-simulator.js",
+    "simulate-local": "cd client && npm run build && cd .. && npm run start-servers | npm run drone-simulator",
+    "simulate": "npm run start-servers && npm run drone-simulator"
   },
   "author": "Itenga aka Nixon Lolila Ramin",
   "license": "ISC",
