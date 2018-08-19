@@ -4,13 +4,14 @@ const url = require('url');
 const { join } = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const Drone = require('./drone');
 const app = express();
 const server = app;
+const { drones } = require('./shared-backend');
 const {
-  drones,
+  droneIds,
   webPort,
   dronesPath,
-  stripDrone,
 } = require('./shared');
 
 app.use(bodyParser.json());
@@ -35,7 +36,7 @@ app.get('/', function (req, res) {
 });
 
 app.get(dronesPath, function (req, res) {
-  const data = drones.map(stripDrone);
+  const data = drones.map(drone => drone.strip());
 
   res.json({ data });
 });

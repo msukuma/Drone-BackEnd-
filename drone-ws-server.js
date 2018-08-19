@@ -2,12 +2,12 @@ const url = require('url');
 const WebSocket = require('ws');
 const getDistance = require('fast-haversine');
 const debug = require('debug')('drone-wss:ws');
+const { dronePort } = require('./shared');
 const {
   drones,
   findDrone,
-  dronePort,
-  stripDrone,
-} = require('./shared');
+} = require('./shared-backend');
+
 const clientWss = require('./client-ws-server');
 
 function parseId(pathname) {
@@ -34,43 +34,6 @@ function valid({ pathname, query }) {
   return id;
 }
 
-function speed(tracker, distance, time) {
-  if (tracker.time === time) {
-    return tracker.speed;
-  }
-
-  return (distance / ((time - tracker.time) / 1000)).toFixed(2);
-}
-
-function updateDrone(drone, location) {
-  const tracker = drone.tracker;
-  const time = Date.now();
-  let distance;
-  let duration;
-
-  if (tracker.time) {
-    duration = time - tracker.time;
-
-    // check that drone is moving
-    if (duration > 10000) {
-      tracker.time = time;
-      tracker.anchor = location;
-      tracker.moving = tracker.max > 1;
-      tracker.max = 0;
-    }
-  } else {
-    tracker.time = time;
-    tracker.anchor = location;
-  }
-
-  distance = getDistance(tracker.anchor, location);
-  tracker.speed = speed(tracker, distance, time);
-
-  if (distance > tracker.max) {
-    tracker.max = distance;
-  }
-}
-
 const droneWss = new WebSocket.Server({
   verify: function (info, cb) {
     const { pathname, query } = url.parse(info.req.url, true);
@@ -91,13 +54,13 @@ droneWss.on('connection', function connection(ws, req) {
   const { pathname } = url.parse(req.url, true);
   const droneId = parseId(pathname);
 
-  ws.drone = findDrone(droneId);
+  ws.drone = findDrone(droneId, drones);
 
   ws.on('message', function incoming(loc) {
     loc = JSON.parse(loc);
-    updateDrone(ws.drone, loc);
+    ws.drone.update(loc);
 
-    const data = JSON.stringify(stripDrone(ws.drone));
+    const data = ws.drone.stringify();
 
     clientWss.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {

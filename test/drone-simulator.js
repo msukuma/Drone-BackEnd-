@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { spawn } = require('child_process');
-const { drones } = require('../shared');
+const { drones } = require('../shared-backend');
 const simPath = join(__dirname, 'simulate.js');
 let duration = parseInt(process.argv[2]) * 1000 || 300000;
 

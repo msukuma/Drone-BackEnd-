@@ -1,9 +1,13 @@
 const { random, round } = require('lodash');
 const WebSocket = require('ws');
 const MAX_STOPS = 2;
+
 const {
   drones,
   findDrone,
+} = require('../shared-backend');
+
+const {
   host,
   dronePort,
 } = require('../shared');
@@ -78,7 +82,7 @@ function simulate(drone, duration) {
 const droneId = parseInt(process.argv[2]);
 const duration = parseInt(process.argv[3]) || undefined;
 
-drone = findDrone(droneId);
+drone = findDrone(droneId, drones);
 
 if (drone) {
   simulate(drone, duration)
