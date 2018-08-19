@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import {
   host,
+  droneIndex,
   webPort,
-  dronesPath
+  clientPort,
+  dronesPath,
 } from './shared';
 import {
   Table,
@@ -10,11 +12,10 @@ import {
   Provider,
 } from 'rendition';
 
-import './App.css';
-
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       drones: [],
       ready: false,
@@ -27,22 +28,25 @@ class App extends Component {
         sortable: true,
       },
       {
-        field: 'name',
-        label: 'Name',
-        sortable: true,
+        field: 'speed',
+        label: 'Speed (m/s)',
       },
       {
-        field: 'location',
-        label: 'Location',
-        render: (value) => value ? value.toString() : '...waiting',
+        field: 'moving',
+        label: 'Status',
+        sortable: true,
+        render: s => s ? 'moving' : 'idling',
       },
     ];
+  }
 
-    this.getDevices();
+  componentDidMount() {
+    this.getDevices()
+      .then(() => this.initWebSocket());
   }
 
   getDevices() {
-    fetch(`http://${host}:${webPort}${dronesPath}`)
+    return fetch(`http://${host}:${webPort}${dronesPath}`)
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -60,17 +64,19 @@ class App extends Component {
   }
 
   initWebSocket() {
-    const socket = new WebSocket('ws://0.0.0.0:8001');
+    const ws = new WebSocket(`ws://${host}:${clientPort}`);
 
-    // Connection opened
-    socket.addEventListener('open', function (event) {
-        socket.send('Hello Server!');
-      });
+    ws.onopen =  () => {
+      console.log('WebSocket connection open');
+    };
 
-    // Listen for messages
-    socket.addEventListener('message', function (event) {
-        console.log('Message from server ', event.data);
-      });
+    ws.onmessage =  (event) => {
+      const drones = this.state.drones;
+      const drone = JSON.parse(event.data);
+
+      drones[droneIndex[drone.id]] = drone;
+      this.setState({ drones: drones.slice() });
+    };
   }
 
   render() {
