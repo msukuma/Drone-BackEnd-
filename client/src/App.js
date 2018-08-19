@@ -33,7 +33,7 @@ class App extends Component {
       },
       {
         field: 'moving',
-        label: 'Status',
+        label: 'Status (past 10s)',
         sortable: true,
         render: s => s ? 'moving' : 'idling',
       },
