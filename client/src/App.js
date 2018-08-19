@@ -45,7 +45,7 @@ class App extends Component {
   }
 
   getDevices() {
-    return fetch(`http://${host}:${webPort}${dronesPath}`)
+    return fetch(`http://${locahost.host}:${webPort}${dronesPath}`)
       .then(res => {
         if (res.ok) {
           return res.json();
