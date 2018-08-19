@@ -1,3 +1,4 @@
+const { random, round } = require('lodash');
 const WebSocket = require('ws');
 const MAX_STOPS = 2;
 const {
@@ -21,14 +22,6 @@ function wait(end, cb) {
   }
 }
 
-function round(n) {
-  return parseFloat(n.toFixed(6));
-}
-
-function randCoordinate() {
-  return round(Math.random() * 50 + 1);
-}
-
 function send(ws, data) {
   data = JSON.stringify(data);
   wait(Date.now() + 1000);
@@ -36,14 +29,13 @@ function send(ws, data) {
 }
 
 function shouldStop(numStops) {
-  // return numStops < MAX_STOPS && Math.random() * 10 < 3;
-  return Math.random() * 10 < 1.5;
+  return random(10.0) < 2;
 }
 
 function updateLocation({ lat, lon }) {
-  const inc = Math.random() / 100000;
-  lat = round(lat + inc);
-  lon = round(lon + inc);
+  const inc = random(0.000001, 0.00005);
+  lat = round(lat + inc, 6);
+  lon = round(lon + inc, 6);
   return { lat, lon };
 }
 
@@ -54,18 +46,16 @@ function simulate(drone, duration) {
 
       ws.on('open', () => {
         let until;
-        let numStops = 0;
         const delay = 11000;
         let stop = timeAfter(duration);
         let location = {
-          lat: randCoordinate(),
-          lon: randCoordinate(),
+          lat: round(random(-85.05, 85), 6),
+          lon: round(random(-180.01, 180), 6),
         };
         const onWait = () => send(ws, location);
 
         while (Date.now() < stop) {
-          if (shouldStop(numStops)) {
-            console.log(`drone ${drone.id} is idling`);
+          if (shouldStop()) {
             until = timeAfter(delay);
 
             if (until >= stop) {
@@ -73,10 +63,7 @@ function simulate(drone, duration) {
             } else {
               wait(until, onWait);
             }
-
-            numStops++;
           } else {
-            console.log(`drone ${drone.id} is moving`);
             location = updateLocation(location);
             send(ws, location);
           }
@@ -84,7 +71,7 @@ function simulate(drone, duration) {
 
         resolve(ws);
       });
-    }, (Math.random() * 2000).toFixed(0));
+    }, random(2000));
   });
 }
 
