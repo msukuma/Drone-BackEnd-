@@ -29,7 +29,7 @@ function send(ws, data) {
 }
 
 function shouldStop(numStops) {
-  return random(10.0) < 2;
+  return random(10) < 2;
 }
 
 function updateLocation({ lat, lon }) {
