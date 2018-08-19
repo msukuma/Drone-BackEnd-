@@ -69,8 +69,6 @@ function updateDrone(drone, location) {
   if (distance > tracker.max) {
     tracker.max = distance;
   }
-
-  debug(tracker.max);
 }
 
 const droneWss = new WebSocket.Server({
