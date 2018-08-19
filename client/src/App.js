@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  host,
   droneIndex,
   webPort,
   clientPort,
@@ -64,12 +63,9 @@ class App extends Component {
   }
 
   initWebSocket() {
-    const ws = new WebSocket(`ws://${host}:${clientPort}`);
+    const ws = new WebSocket(`ws://${location.host}:${clientPort}`);
 
-    ws.onopen =  () => {
-      console.log('WebSocket connection open');
-    };
-
+    ws.onopen =  () => console.log('WebSocket connection open');
     ws.onmessage =  (event) => {
       const drones = this.state.drones;
       const drone = JSON.parse(event.data);
