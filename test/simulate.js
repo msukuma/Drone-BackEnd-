@@ -83,5 +83,5 @@ drone = findDrone(droneId);
 if (drone) {
   simulate(drone, duration)
     .then(ws => ws.close())
-    .catch(err => console.log(err));
+    .catch(err => console.error(err));
 }
