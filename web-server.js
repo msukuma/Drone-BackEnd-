@@ -10,6 +10,7 @@ const {
   drones,
   webPort,
   dronesPath,
+  stripDrone,
 } = require('./shared');
 
 app.use(bodyParser.json());
@@ -34,13 +35,8 @@ app.get('/', function (req, res) {
 });
 
 app.get(dronesPath, function (req, res) {
-  const data = drones.map(({ id, name, moving, location }) => ({
-    id,
-    name,
-    moving,
-    location,
-  }));
-  debug(data);
+  const data = drones.map(stripDrone);
+
   res.json({ data });
 });
 
