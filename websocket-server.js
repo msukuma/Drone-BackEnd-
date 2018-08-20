@@ -1,7 +1,7 @@
 const url = require('url');
 const WebSocket = require('ws');
 const getDistance = require('fast-haversine');
-const debug = require('debug')('drone-wss:ws');
+const debug = require('debug')('websocket-server:');
 const { wssPort } = require('./shared');
 const {
   drones,
@@ -56,5 +56,3 @@ wss.on('connection', function connection(ws, req) {
 wss.on('listening', () => {
   debug(`client WebSocket server listening on port ${wssPort}`);
 });
-
-module.exports = wss;

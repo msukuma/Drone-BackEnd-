@@ -48,6 +48,7 @@ function simulate(drone, duration) {
     setTimeout(() => {
       const ws = new WebSocket(`ws://${host}:${wssPort}/${drone.id}`);
 
+      ws.on('error', err => console.error(err));
       ws.on('open', () => {
         let until;
         const delay = 11000;

@@ -1,4 +1,4 @@
-process.env.DEBUG = 'express:*,web-server:*,client-wss:*,drone-wss:*';
+process.env.DEBUG = 'express:*,web-server:*,websocket-server:*';
 
 require('./web-server');
-require('./drone-ws-server');
+require('./websocket-server');

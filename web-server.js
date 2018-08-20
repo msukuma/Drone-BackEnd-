@@ -1,9 +1,6 @@
-const debug = require('debug')('web-server:server');
-const ws = require('ws');
-const url = require('url');
+const debug = require('debug')('web-server:');
 const { join } = require('path');
 const express = require('express');
-const bodyParser = require('body-parser');
 const Drone = require('./drone');
 const app = express();
 const server = app;
@@ -13,8 +10,6 @@ const {
   webPort,
   dronesPath,
 } = require('./shared');
-
-app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
