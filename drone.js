@@ -1,20 +1,16 @@
 const calcDistance = require('fast-haversine');
-const uuidv5 = require('uuid/v5');
-const { host } = require('./shared');
-const namespace = uuidv5(host, uuidv5.DNS);
 
-function calcSpeed(tracker, distance, time) {
+const calcSpeed = (tracker, distance, time) => {
   if (tracker.time === time) {
     return tracker.speed;
   }
 
   return (distance / ((time - tracker.time) / 1000)).toFixed(2);
-}
+};
 
 class Drone {
   constructor(id, key) {
     this.id = id;
-    this.key = uuidv5(id.toString(), namespace);
     this.tracker = {
       time: 0,
       speed: 0,

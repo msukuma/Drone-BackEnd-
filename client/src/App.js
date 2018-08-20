@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import {
   droneIndex,
+  host,
+  wssPort,
   webPort,
-  clientPort,
+  clientsPath,
   dronesPath,
 } from './shared';
 import {
@@ -45,7 +47,7 @@ class App extends Component {
   }
 
   getDevices() {
-    return fetch(`http://${location.host}:${webPort}${dronesPath}`)
+    return fetch(`http://${host}:${webPort}${dronesPath}`)
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -63,7 +65,7 @@ class App extends Component {
   }
 
   initWebSocket() {
-    const ws = new WebSocket(`ws://${location.host}:${clientPort}`);
+    const ws = new WebSocket(`ws://${host}:${wssPort}${clientsPath}`);
 
     ws.onopen =  () => console.log('WebSocket connection open');
     ws.onmessage =  (event) => {

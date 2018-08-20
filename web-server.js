@@ -37,7 +37,7 @@ app.get('/', function (req, res) {
 
 app.get(dronesPath, function (req, res) {
   const data = drones.map(drone => drone.strip());
-
+  debug(data);
   res.json({ data });
 });
 
