@@ -10,6 +10,7 @@ const {
 const {
   host,
   wssPort,
+  dronesPath,
 } = require('../shared');
 
 function timeAfter(duration) {
@@ -46,7 +47,7 @@ function updateLocation({ lat, lon }) {
 function simulate(drone, duration) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const ws = new WebSocket(`ws://${host}:${wssPort}/${drone.id}`);
+      const ws = new WebSocket(`ws://${host}:${wssPort}${dronesPath}/${drone.id}`);
 
       ws.on('error', err => console.error(err));
       ws.on('open', () => {

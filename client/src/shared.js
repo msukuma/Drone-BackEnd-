@@ -22,6 +22,6 @@ module.exports = {
   host,
   webPort: 8000,
   wssPort: 8001,
-  clientsPath: '/client',
+  clientsPath: '/clients',
   dronesPath: '/drones',
 };

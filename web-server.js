@@ -37,5 +37,5 @@ app.get(dronesPath, function (req, res) {
 });
 
 app.listen(webPort, () => {
-  debug(`API listening on port ${webPort}`);
+  debug(`webserver listening on port ${webPort}`);
 });

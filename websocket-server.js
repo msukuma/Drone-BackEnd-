@@ -2,55 +2,77 @@ const url = require('url');
 const WebSocket = require('ws');
 const getDistance = require('fast-haversine');
 const debug = require('debug')('websocket-server:');
-const { wssPort } = require('./shared');
+const {
+  wssPort,
+  clientsPath,
+} = require('./shared');
+
 const {
   drones,
   findDrone,
 } = require('./shared-backend');
 
 function parseId(pathname) {
-  return parseInt(pathname.split('/')[1]);
+  const parts = pathname.split('/');
+  const idIndex = parts.length - 1;
+  return parseInt(parts[idIndex]);
 }
 
 function isDrone(pathname) {
-  return /\/\d+$/.test(pathname);
+  return /\/drones\/\d+$/.test(pathname);
+}
+
+function isClient(pathname) {
+  return pathname === clientsPath;
 }
 
 const wss = new WebSocket.Server({ port: wssPort });
-wss.webClients = new Set();
+const webClients = new Set();
 
 wss.on('connection', function connection(ws, req) {
-  const { pathname } = url.parse(req.url);
+  let drone;
   let droneId;
+  const { pathname } = url.parse(req.url);
+  const isdrone = isDrone(pathname);
+  const isclient = isClient(pathname);
 
-  if (isDrone(pathname)) {
+  if (isdrone) {
     droneId = parseId(pathname);
-    ws.drone = findDrone(droneId, drones);
+    drone = findDrone(droneId);
 
-    ws.on('message', function incoming(loc) {
-      loc = JSON.parse(loc);
-      ws.drone.update(loc);
+    if (drone) {
+      ws.drone = findDrone(droneId);
 
-      const data = ws.drone.stringify();
+      ws.on('message', function incoming(loc) {
+        loc = JSON.parse(loc);
+        ws.drone.update(loc);
 
-      wss.webClients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(data);
-        }
+        const data = ws.drone.stringify();
+
+        webClients.forEach(function each(client) {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(data);
+          }
+        });
+
       });
-
-    });
-  } else {
-    wss.webClients.add(ws);
+    }
+  } else if (isclient) {
+    webClients.add(ws);
   }
 
-  ws.on('error', err => debug(err));
-  ws.on('close', (code, reason) => {
-    wss.webClients.delete(ws);
-    debug(`connection to ${droneId} closed code: ${code}, reason: ${reason}`);
-  });
+  if (isdrone || isclient) {
+    ws.on('error', err => debug(err));
+    ws.on('close', (code, reason) => {
+      webClients.delete(ws);
+      debug(`connection to ${droneId} closed code: ${code}, reason: ${reason}`);
+    });
 
-  debug(`new connection from ${droneId ? droneId : 'web client'}`);
+    debug(`new connection from ${droneId ? droneId : 'web client'}`);
+  } else {
+    ws.close();
+    debug(`invalid request req: ${req.url}`);
+  }
 });
 
 wss.on('listening', () => {
