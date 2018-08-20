@@ -29,6 +29,11 @@ class App extends Component {
         sortable: true,
       },
       {
+        field: 'location',
+        label: 'Location',
+        render: ({ lat, lon }) => `lat: ${lat}, lon: ${lon}`,
+      },
+      {
         field: 'speed',
         label: 'Speed (m/s)',
       },

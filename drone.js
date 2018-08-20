@@ -17,6 +17,10 @@ class Drone {
       moving: false,
       max: 0,
       anchor: null,
+      location: {
+        lat: '',
+        lon: '',
+      },
     };
   }
 
@@ -26,6 +30,10 @@ class Drone {
 
   get moving() {
     return this.tracker.moving;
+  }
+
+  get location() {
+    return this.tracker.location;
   }
 
   update(location) {
@@ -51,6 +59,7 @@ class Drone {
 
     distance = calcDistance(tracker.anchor, location);
     tracker.speed = calcSpeed(tracker, distance, time);
+    tracker.location = location;
 
     if (distance > tracker.max) {
       tracker.max = distance;
@@ -62,9 +71,10 @@ class Drone {
       id,
       speed,
       moving,
+      location,
     } = this;
 
-    return { id, speed, moving };
+    return { id, speed, moving, location };
   }
 
   stringify() {
