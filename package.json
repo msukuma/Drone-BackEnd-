@@ -7,7 +7,7 @@
     "start-servers": "node index.js",
     "drone-simulator": "node test/drone-simulator.js",
     "simulate-local": "cd client && npm run build && cd .. && npm run start-servers | npm run drone-simulator",
-    "simulate": "npm run start-servers && npm run drone-simulator"
+    "simulate": "npm run start-servers | npm run drone-simulator"
   },
   "author": "Itenga aka Nixon Lolila Ramin",
   "license": "ISC",
