@@ -11,4 +11,4 @@ RUN ["npm", "run", "build"]
 # prep and run backend
 WORKDIR /app
 RUN ["npm", "install"]
-CMD ["npm", "simulate"]
+CMD ["npm", "run", "simulate"]
