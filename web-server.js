@@ -4,12 +4,12 @@ const express = require('express');
 const Drone = require('./drone');
 const app = express();
 const server = app;
-const { drones } = require('./shared-backend');
 const {
+  drones,
   droneIds,
   webPort,
   dronesPath,
-} = require('./shared');
+} = require('./shared-backend');
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');

@@ -3,13 +3,10 @@ const WebSocket = require('ws');
 const getDistance = require('fast-haversine');
 const debug = require('debug')('websocket-server:');
 const {
-  wssPort,
-  clientsPath,
-} = require('./shared');
-
-const {
   drones,
   findDrone,
+  wssPort,
+  clientsPath,
 } = require('./shared-backend');
 
 function parseId(pathname) {
