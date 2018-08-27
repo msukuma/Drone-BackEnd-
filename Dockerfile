@@ -1,6 +1,5 @@
 FROM node:8
 
-EXPOSE 8000 8001
 WORKDIR /app
 COPY . /app
 
