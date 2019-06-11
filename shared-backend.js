@@ -8,11 +8,11 @@ const {
 const drones = droneIds.map(id => new Drone(id));
 
 for (let key in shared) {
-  module.exports[key] = shared[key];
+  exports[key] = shared[key];
 }
 
-module.exports.drones = drones;
-module.exports.findDrone = function findDrone(id) {
+exports.drones = drones;
+exports.findDrone = function findDrone(id) {
   const i = droneIndex[id];
   return drones[i];
 };

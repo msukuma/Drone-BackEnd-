@@ -46,18 +46,14 @@ class App extends Component {
     ];
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.getDevices()
       .then(() => this.initWebSocket());
   }
 
-  getDevices() {
+  getDevices () {
     return fetch(`http://${host}:${webPort}${dronesPath}`)
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
+      .then(res => res.ok ? res.json() : res.json.then(err => Promise.reject(err)))
       .then(json => {
         if (json) {
           this.setState({
@@ -69,11 +65,11 @@ class App extends Component {
       .catch(err => console.log(err));
   }
 
-  initWebSocket() {
+  initWebSocket () {
     const ws = new WebSocket(`ws://${host}:${wssPort}${clientsPath}`);
 
-    ws.onopen =  () => console.log('WebSocket connection open');
-    ws.onmessage =  (event) => {
+    ws.onopen = () => console.log('WebSocket connection open');
+    ws.onmessage = (event) => {
       const drones = this.state.drones;
       const drone = JSON.parse(event.data);
 
@@ -82,15 +78,15 @@ class App extends Component {
     };
   }
 
-  render() {
+  render () {
     return (
       <div className="App">
         <Provider>
-          <Container mt={50}>
+          <Container mt={ 50 }>
             <Table
-              columns={this.columns}
-              data={this.state.drones}
-              rowKey={'id'}
+              columns={ this.columns }
+              data={ this.state.drones }
+              rowKey={ 'id' }
             />
           </Container>
         </Provider>

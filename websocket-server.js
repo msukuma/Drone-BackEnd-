@@ -1,32 +1,30 @@
 const url = require('url');
 const WebSocket = require('ws');
-const getDistance = require('fast-haversine');
 const debug = require('debug')('websocket-server:');
 const {
-  drones,
   findDrone,
   wssPort,
   clientsPath,
 } = require('./shared-backend');
 
-function parseId(pathname) {
+function parseId (pathname) {
   const parts = pathname.split('/');
   const idIndex = parts.length - 1;
   return parseInt(parts[idIndex]);
 }
 
-function isDrone(pathname) {
+function isDrone (pathname) {
   return /\/drones\/\d+$/.test(pathname);
 }
 
-function isClient(pathname) {
+function isClient (pathname) {
   return pathname === clientsPath;
 }
 
 const wss = new WebSocket.Server({ port: wssPort });
 const webClients = new Set();
 
-wss.on('connection', function connection(ws, req) {
+wss.on('connection', function connection (ws, req) {
   let drone;
   let droneId;
   const { pathname } = url.parse(req.url);
@@ -40,13 +38,13 @@ wss.on('connection', function connection(ws, req) {
     if (drone) {
       ws.drone = findDrone(droneId);
 
-      ws.on('message', function incoming(loc) {
+      ws.on('message', function incoming (loc) {
         loc = JSON.parse(loc);
         ws.drone.update(loc);
 
         const data = ws.drone.stringify();
 
-        webClients.forEach(function each(client) {
+        webClients.forEach(function each (client) {
           if (client.readyState === WebSocket.OPEN) {
             client.send(data);
           }
